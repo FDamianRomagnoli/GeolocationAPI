@@ -1,0 +1,34 @@
+.list-data{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: start;
+}
+
+.list-data__items--title{
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.list-data__items--value, .list-data__items--value-br{
+    color: black;
+    font-weight: normal;
+    font-size: 10px;
+}
+
+.list-data__items--value-br{
+    display: block;
+}
+
+.list-data__items--value-time{
+    display: block;
+    color: black;
+    font-weight: normal;
+    font-size: 10px;
+}
+
+h2{
+    color: gray;
+}
