@@ -16,8 +16,8 @@ public class IpApiResponse {
     private String region_name;
     private String city;
     private String zip;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
     private Location location;
     private TimeZone time_zone;

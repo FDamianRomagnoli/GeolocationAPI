@@ -1,6 +1,8 @@
 package com.mercadolibre.app_geo.service;
 
 import com.mercadolibre.app_geo.dto.*;
+import com.mercadolibre.app_geo.exception.BusinessException;
+import com.mercadolibre.app_geo.exception.messages.ErrorMessage;
 import com.mercadolibre.app_geo.mapper.CountryMapper;
 import com.mercadolibre.app_geo.mapper.CurrencyMapper;
 import com.mercadolibre.app_geo.mapper.RegionMapper;
@@ -75,6 +77,12 @@ public class GeolocationService {
     public GeolocationDataDTO getGeolocationDataByIp(String ip) {
         IpApiResponse response = externalSourceIpApiService.findDataByIp(ip);
         geolocationStatsService.cleanCache();
+
+        if(!hasCountryNameAndCode(response) && !hasCountryNameAndCode(response)){
+            log.error("Api externa no devolvio correctamente datos claves como país y codigo");
+            throw new BusinessException(ErrorMessage.IP_ERROR_API.getCode(), ErrorMessage.IP_ERROR_API.getMessage());
+        }
+
         return generateGeolocationDataDtoFromSource(response);
     }
 
@@ -88,6 +96,7 @@ public class GeolocationService {
     }
 
     private void setCountryDtoFromSource(GeolocationDataDTO result, IpApiResponse source) {
+
         CountryEntity country = countryService.findOrCreate(source.getCountry_name(), source.getCountry_code());
         List<Map<String, Object>> languages = getLanguagesFromSource(source);
         List<String> timeZones = getTimeZonesFromSource(source);
@@ -158,6 +167,15 @@ public class GeolocationService {
         result.setRegionTo(regionMapper.INSTANCE.toDto(regionDefault));
 
         result.setDistanceInKmToBA(distance);
+
+    }
+
+    private Boolean hasCountryNameAndCode(IpApiResponse source){
+        return source.getCountry_name() != null && source.getCountry_code() != null;
+    }
+
+    private Boolean hasLatitudeAndLongitude(IpApiResponse source){
+        return source.getLongitude() != null && source.getLatitude() != null;
     }
 
     private Double calculateDistanceFromTo(RegionEntity region,RegionEntity regionDefault) {
