@@ -78,7 +78,7 @@ public class GeolocationService {
         IpApiResponse response = externalSourceIpApiService.findDataByIp(ip);
         geolocationStatsService.cleanCache();
 
-        if(!hasCountryNameAndCode(response) && !hasCountryNameAndCode(response)){
+        if(!hasCountryNameAndCode(response) && !hasLatitudeAndLongitude(response)){
             log.error("Api externa no devolvio correctamente datos claves como país y codigo");
             throw new BusinessException(ErrorMessage.IP_ERROR_API.getCode(), ErrorMessage.IP_ERROR_API.getMessage());
         }
