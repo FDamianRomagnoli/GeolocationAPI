@@ -14,8 +14,15 @@ import java.util.Optional;
 @Service
 public class CountryService {
 
+
+    private final CountryDao countryDao;
+
     @Autowired
-    CountryDao countryDao;
+    public CountryService(
+            CountryDao countryDao
+    ){
+        this.countryDao = countryDao;
+    }
 
     @Transactional
     public CountryEntity findOrCreate(String countryName, String countryCode) {

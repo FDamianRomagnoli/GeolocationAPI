@@ -21,11 +21,17 @@ import java.util.Map;
 @Service
 public class ExternalSourceTimeZoneDbApiService {
 
-    @Autowired
-    protected RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     @Value("${timezonedb.api.key}")
     private String apiKey;
+
+    @Autowired
+    public ExternalSourceTimeZoneDbApiService(
+            RestTemplate restTemplate
+    ){
+        this.restTemplate = restTemplate;
+    }
 
 
     public List<String> findAllTimeZoneByCountry(String countryCode){

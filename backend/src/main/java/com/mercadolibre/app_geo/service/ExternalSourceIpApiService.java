@@ -18,11 +18,17 @@ import java.net.UnknownHostException;
 @Service
 public class ExternalSourceIpApiService {
 
-    @Autowired
-    protected RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     @Value("${ipapi.api.key}")
     private String apiKey;
+
+    @Autowired
+    public ExternalSourceIpApiService(
+            RestTemplate restTemplate
+    ){
+        this.restTemplate = restTemplate;
+    }
 
     public IpApiResponse findDataByIp(String ip) {
 

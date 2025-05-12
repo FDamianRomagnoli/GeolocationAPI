@@ -26,26 +26,37 @@ public class GeolocationService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss (OOOO)");
 
-    @Autowired
-    private ExternalSourceIpApiService externalSourceIpApiService;
+    private final ExternalSourceIpApiService externalSourceIpApiService;
+
+    private final CountryService countryService;
+
+    private final RegionService regionService;
+
+    private final ExchangeRateService exchangeRateService;
+    private final GeolocationStatsService geolocationStatsService;
+
+    private final ExternalSourceTimeZoneDbApiService externalSourceTimeZoneDbApiService;
+
+    private final CurrencyService currencyService;
 
     @Autowired
-    private CountryService countryService;
-
-    @Autowired
-    private RegionService regionService;
-
-    @Autowired
-    private ExchangeRateService exchangeRateService;
-
-    @Autowired
-    private GeolocationStatsService geolocationStatsService;
-
-    @Autowired
-    private ExternalSourceTimeZoneDbApiService externalSourceTimeZoneDbApiService;
-
-    @Autowired
-    private CurrencyService currencyService;
+    public GeolocationService(
+             ExternalSourceIpApiService externalSourceIpApiService,
+             CountryService countryService,
+             RegionService regionService,
+             ExchangeRateService exchangeRateService,
+             GeolocationStatsService geolocationStatsService,
+             ExternalSourceTimeZoneDbApiService externalSourceTimeZoneDbApiService,
+             CurrencyService currencyService
+    ){
+        this.externalSourceIpApiService = externalSourceIpApiService;
+        this.countryService = countryService;
+        this.regionService = regionService;
+        this.exchangeRateService = exchangeRateService;
+        this.geolocationStatsService = geolocationStatsService;
+        this.externalSourceTimeZoneDbApiService = externalSourceTimeZoneDbApiService;
+        this.currencyService = currencyService;
+    }
 
 
     public GeolocationDataDTO getGeolocationDataByIp(String ip) {

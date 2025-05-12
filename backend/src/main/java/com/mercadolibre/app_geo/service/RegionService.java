@@ -17,8 +17,11 @@ import java.util.Optional;
 @Service
 public class RegionService{
 
+    private final RegionDao regionDao;
     @Autowired
-    RegionDao regionDao;
+    public RegionService(RegionDao regionDao){
+        this.regionDao = regionDao;
+    }
 
     @Transactional
     public RegionEntity findOrCreate(String regionName, Double latitude, Double longitude, CountryEntity country) {

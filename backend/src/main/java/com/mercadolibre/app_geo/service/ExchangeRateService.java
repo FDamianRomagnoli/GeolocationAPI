@@ -17,14 +17,22 @@ import java.util.Map;
 @Service
 public class ExchangeRateService {
 
-    @Autowired
-    private ExchangeRateDao exchangeRateDao;
+    private final ExchangeRateDao exchangeRateDao;
+
+    private final CurrencyService currencyService;
+
+    private final ExternalSourceFixerApiService externalSourceFixerApiService;
 
     @Autowired
-    private CurrencyService currencyService;
-
-    @Autowired
-    private ExternalSourceFixerApiService externalSourceFixerApiService;
+    public ExchangeRateService(
+            ExchangeRateDao exchangeRateDao,
+            CurrencyService currencyService,
+            ExternalSourceFixerApiService externalSourceFixerApiService
+    ){
+        this.exchangeRateDao = exchangeRateDao;
+        this.currencyService = currencyService;
+        this.externalSourceFixerApiService = externalSourceFixerApiService;
+    }
 
     @Transactional
     public Double findExchangeRateByDateAndCurrency(String date, String currencyCodeFrom, String currencyCodeTo) {

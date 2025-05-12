@@ -20,8 +20,12 @@ import java.util.Optional;
 @Service
 public class GeolocationStatsService{
 
+    private final GeolocationStatsDao geolocationStatsDao;
+
     @Autowired
-    GeolocationStatsDao geolocationStatsDao;
+    public GeolocationStatsService(GeolocationStatsDao geolocationStatsDao){
+        this.geolocationStatsDao = geolocationStatsDao;
+    }
 
     @Transactional
     public void incrementGeolocationStats(RegionEntity regionFrom, RegionEntity regionTo, Double distance) {

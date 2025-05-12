@@ -14,8 +14,12 @@ import java.util.Optional;
 @Service
 public class CurrencyService {
 
+    private final CurrencyDao currencyDao;
+
     @Autowired
-    CurrencyDao currencyDao;
+    public CurrencyService(CurrencyDao currencyDao){
+        this.currencyDao = currencyDao;
+    }
 
     @Transactional
     public CurrencyEntity findOrCreate(String currencyCode) {

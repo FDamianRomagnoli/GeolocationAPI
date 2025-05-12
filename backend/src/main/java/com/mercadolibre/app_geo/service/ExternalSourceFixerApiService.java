@@ -24,15 +24,20 @@ public class ExternalSourceFixerApiService {
 
     private final String CURRENCY_BASE = "EUR";
 
-    @Autowired
-    protected RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Lazy
-    @Autowired
-    private ExchangeRateService exchangeRateService;
+    private final ExchangeRateService exchangeRateService;
 
     @Value("${fixer.api.key}")
     private String apiKey;
+
+    public ExternalSourceFixerApiService(
+            RestTemplate restTemplate,
+            @Lazy ExchangeRateService exchangeRateService
+    ){
+        this.restTemplate = restTemplate;
+        this.exchangeRateService = exchangeRateService;
+    }
 
     @Transactional
     public Double findConversionRateAndSave(String date, CurrencyEntity currencyFrom, CurrencyEntity currencyTo){
