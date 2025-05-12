@@ -77,12 +77,6 @@ public class GeolocationService {
     public GeolocationDataDTO getGeolocationDataByIp(String ip) {
         IpApiResponse response = externalSourceIpApiService.findDataByIp(ip);
         geolocationStatsService.cleanCache();
-
-        if(!hasCountryNameAndCode(response) && !hasLatitudeAndLongitude(response)){
-            log.error("Api externa no devolvio correctamente datos claves como país y codigo");
-            throw new BusinessException(ErrorMessage.IP_ERROR_API.getCode(), ErrorMessage.IP_ERROR_API.getMessage());
-        }
-
         return generateGeolocationDataDtoFromSource(response);
     }
 
@@ -168,14 +162,6 @@ public class GeolocationService {
 
         result.setDistanceInKmToBA(distance);
 
-    }
-
-    private Boolean hasCountryNameAndCode(IpApiResponse source){
-        return source.getCountry_name() != null && source.getCountry_code() != null;
-    }
-
-    private Boolean hasLatitudeAndLongitude(IpApiResponse source){
-        return source.getLongitude() != null && source.getLatitude() != null;
     }
 
     private Double calculateDistanceFromTo(RegionEntity region,RegionEntity regionDefault) {

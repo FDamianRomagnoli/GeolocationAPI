@@ -26,7 +26,7 @@ public class ExternalSourceIpApiService {
     @Autowired
     public ExternalSourceIpApiService(
             RestTemplate restTemplate
-    ){
+    ) {
         this.restTemplate = restTemplate;
     }
 
@@ -42,10 +42,18 @@ public class ExternalSourceIpApiService {
                 .build()
                 .toUriString();
 
-        if(isValidIp(ip)){
+        if (isValidIp(ip)) {
             log.info("IP Valida, consultando por informacion a Api externa");
+
             ResponseEntity<IpApiResponse> response = restTemplate.getForEntity(url, IpApiResponse.class);
-            return response.getBody();
+            IpApiResponse result = response.getBody();
+
+            if (!hasCountryNameAndCode(result) || !hasLatitudeAndLongitude(result)) {
+                log.error("Api externa no devolvio correctamente datos claves como país y codigo");
+                throw new BusinessException(ErrorMessage.IP_ERROR_API.getCode(), ErrorMessage.IP_ERROR_API.getMessage());
+            }
+
+            return result;
         }
         else{
             log.error("IP Invalida");
@@ -57,7 +65,7 @@ public class ExternalSourceIpApiService {
     private boolean isValidIp(String ip) {
         log.info("Validando si la IP ingresada es pública y posee un formato válido");
 
-        log.info("Validando formato IPv4 de Ip Ingresada");
+        log.info("Validando formato IPv4 de Ip Ingresada: {}", ip);
         String ipv4Regex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}$";
         if (!ip.matches(ipv4Regex)) {
             log.error("IP con formato inválido: " + ip);
@@ -76,6 +84,15 @@ public class ExternalSourceIpApiService {
             log.error("IP inválida: " + e.getMessage());
             return false;
         }
+    }
+
+    private Boolean hasCountryNameAndCode(IpApiResponse source){
+        log.info("ISO CODE: " + source.getCountry_code());
+        return source.getCountry_name() != null && source.getCountry_code() != null;
+    }
+
+    private Boolean hasLatitudeAndLongitude(IpApiResponse source){
+        return source.getLongitude() != null && source.getLatitude() != null;
     }
 
 }
