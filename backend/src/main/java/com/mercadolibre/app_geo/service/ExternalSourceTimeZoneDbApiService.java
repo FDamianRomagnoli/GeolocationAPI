@@ -4,6 +4,8 @@ import com.mercadolibre.app_geo.dto.TimeZoneDbResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,18 +25,30 @@ public class ExternalSourceTimeZoneDbApiService {
 
     private final RestTemplate restTemplate;
 
+    private final ExternalSourceTimeZoneDbApiService self;
+
     @Value("${timezonedb.api.key}")
     private String apiKey;
 
     @Autowired
     public ExternalSourceTimeZoneDbApiService(
-            RestTemplate restTemplate
+            RestTemplate restTemplate,
+            @Lazy ExternalSourceTimeZoneDbApiService externalSourceTimeZoneDbApiService
     ){
         this.restTemplate = restTemplate;
+        this.self = externalSourceTimeZoneDbApiService;
     }
 
 
     public List<String> findAllTimeZoneByCountry(String countryCode){
+
+        ResponseEntity<TimeZoneDbResponse> response =  self.requestTimeZoneByCountryCode(countryCode);
+
+        return generateTimeZoneBySource(response.getBody());
+    }
+
+    @Cacheable("countryTimeZones")
+    public ResponseEntity<TimeZoneDbResponse> requestTimeZoneByCountryCode(String countryCode){
 
         String url = UriComponentsBuilder
                 .newInstance()
@@ -47,9 +61,7 @@ public class ExternalSourceTimeZoneDbApiService {
                 .build()
                 .toUriString();
 
-        ResponseEntity<TimeZoneDbResponse> response = restTemplate.getForEntity(url, TimeZoneDbResponse.class);
-
-        return generateTimeZoneBySource(response.getBody());
+        return restTemplate.getForEntity(url, TimeZoneDbResponse.class);
     }
 
     private List<String> generateTimeZoneBySource(TimeZoneDbResponse source) {
