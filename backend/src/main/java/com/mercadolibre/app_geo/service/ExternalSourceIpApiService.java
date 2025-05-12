@@ -6,6 +6,7 @@ import com.mercadolibre.app_geo.exception.messages.ErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -30,6 +31,7 @@ public class ExternalSourceIpApiService {
         this.restTemplate = restTemplate;
     }
 
+    @Cacheable("ipDataCache")
     public IpApiResponse findDataByIp(String ip) {
 
         String url = UriComponentsBuilder
