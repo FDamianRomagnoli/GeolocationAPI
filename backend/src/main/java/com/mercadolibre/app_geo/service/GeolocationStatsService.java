@@ -20,11 +20,18 @@ import java.util.Optional;
 @Service
 public class GeolocationStatsService{
 
+
     private final GeolocationStatsDao geolocationStatsDao;
+    private final RegionMapper regionMapper;
 
     @Autowired
-    public GeolocationStatsService(GeolocationStatsDao geolocationStatsDao){
+    public GeolocationStatsService(
+            GeolocationStatsDao geolocationStatsDao,
+            RegionMapper regionMapper
+
+    ){
         this.geolocationStatsDao = geolocationStatsDao;
+        this.regionMapper = regionMapper;
     }
 
     @Transactional
@@ -82,8 +89,8 @@ public class GeolocationStatsService{
     }
 
     private GeolocationStatsDTO geolocationEntityToGeolocationEntityDto(GeolocationStatsEntity source, GeolocationStatsDTO dest){
-        dest.setRegionDtoTo(RegionMapper.INSTANCE.toDto(source.getRegionTo()));
-        dest.setRegionDtoFrom(RegionMapper.INSTANCE.toDto(source.getRegionFrom()));
+        dest.setRegionDtoTo(regionMapper.INSTANCE.toDto(source.getRegionTo()));
+        dest.setRegionDtoFrom(regionMapper.INSTANCE.toDto(source.getRegionFrom()));
         dest.setDistanceInKm(source.getDistanceKm());
         dest.setInvocationCount(Long.valueOf(source.getInvocationCount()));
         return dest;

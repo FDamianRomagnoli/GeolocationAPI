@@ -43,29 +43,37 @@ public class ExternalSourceIpApiService {
                 .toUriString();
 
         if(isValidIp(ip)){
+            log.info("IP Valida, consultando por informacion a Api externa");
             ResponseEntity<IpApiResponse> response = restTemplate.getForEntity(url, IpApiResponse.class);
             return response.getBody();
         }
         else{
+            log.error("IP Invalida");
             throw new BusinessException(ErrorMessage.INVALID_IP.getCode(), ErrorMessage.INVALID_IP.getMessage(), ip);
         }
 
     }
 
-    private boolean isValidIp(String ip){
+    private boolean isValidIp(String ip) {
+        log.info("Validando si la IP ingresada es pública y posee un formato válido");
 
-        log.info("Validando si la IP ingresada es publica y posee un formato valido");
+        log.info("Validando formato IPv4 de Ip Ingresada");
+        String ipv4Regex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}$";
+        if (!ip.matches(ipv4Regex)) {
+            log.error("IP con formato inválido: " + ip);
+            return false;
+        }
+
         try {
             InetAddress inet = InetAddress.getByName(ip);
-
-            return !(inet.isAnyLocalAddress() ||
-                    inet.isLoopbackAddress() ||
-                    inet.isSiteLocalAddress() ||
-                    inet.isLinkLocalAddress() ||
-                    inet.isMulticastAddress());
+            return !(inet.isAnyLocalAddress()
+                    || inet.isLoopbackAddress()
+                    || inet.isSiteLocalAddress()
+                    || inet.isLinkLocalAddress()
+                    || inet.isMulticastAddress());
 
         } catch (UnknownHostException e) {
-            log.error("IP Invalida: " + e.getMessage());
+            log.error("IP inválida: " + e.getMessage());
             return false;
         }
     }

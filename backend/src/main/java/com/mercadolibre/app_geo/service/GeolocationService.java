@@ -39,6 +39,13 @@ public class GeolocationService {
 
     private final CurrencyService currencyService;
 
+    private final CountryMapper countryMapper;
+
+    private final CurrencyMapper currencyMapper;
+
+    private final RegionMapper regionMapper;
+
+
     @Autowired
     public GeolocationService(
              ExternalSourceIpApiService externalSourceIpApiService,
@@ -47,7 +54,10 @@ public class GeolocationService {
              ExchangeRateService exchangeRateService,
              GeolocationStatsService geolocationStatsService,
              ExternalSourceTimeZoneDbApiService externalSourceTimeZoneDbApiService,
-             CurrencyService currencyService
+             CurrencyService currencyService,
+             CountryMapper countryMapper,
+             CurrencyMapper currencyMapper,
+             RegionMapper regionMapper
     ){
         this.externalSourceIpApiService = externalSourceIpApiService;
         this.countryService = countryService;
@@ -56,12 +66,14 @@ public class GeolocationService {
         this.geolocationStatsService = geolocationStatsService;
         this.externalSourceTimeZoneDbApiService = externalSourceTimeZoneDbApiService;
         this.currencyService = currencyService;
+        this.countryMapper = countryMapper;
+        this.currencyMapper = currencyMapper;
+        this.regionMapper = regionMapper;
     }
 
 
     public GeolocationDataDTO getGeolocationDataByIp(String ip) {
         IpApiResponse response = externalSourceIpApiService.findDataByIp(ip);
-        log.info("Se limpia cache de servicio de reporte, debido a actualización");
         geolocationStatsService.cleanCache();
         return generateGeolocationDataDtoFromSource(response);
     }
@@ -80,7 +92,9 @@ public class GeolocationService {
         List<Map<String, Object>> languages = getLanguagesFromSource(source);
         List<String> timeZones = getTimeZonesFromSource(source);
 
-        CountryDTO countryDto = CountryMapper.INSTANCE.toDto(country, languages, timeZones);
+        CountryDTO countryDto = countryMapper.INSTANCE.toDto(country);
+        countryMapper.setLanguages(countryDto, languages);
+        countryMapper.setCountryTimeZones(countryDto, timeZones);
 
         result.setCountryDTO(countryDto);
     }
@@ -122,7 +136,8 @@ public class GeolocationService {
             Map<String, Object> exchangeRates = new HashMap<>();
             exchangeRates.put(CURRENCY_CODE_BASE_DEFAULT, rate);
 
-            CurrencyDTO currencyDTO = CurrencyMapper.INSTANCE.toDto(currency, symbol, exchangeRates);
+            CurrencyDTO currencyDTO = currencyMapper.INSTANCE.toDto(currency);
+            currencyMapper.setSymbolAndExchangeRates(currencyDTO, symbol, exchangeRates);
 
             result.setCurrencyDTO(currencyDTO);
 
@@ -139,8 +154,8 @@ public class GeolocationService {
 
         Double distance = calculateDistanceFromTo(region, regionDefault);
 
-        result.setRegionFrom(RegionMapper.INSTANCE.toDto(region));
-        result.setRegionTo(RegionMapper.INSTANCE.toDto(regionDefault));
+        result.setRegionFrom(regionMapper.INSTANCE.toDto(region));
+        result.setRegionTo(regionMapper.INSTANCE.toDto(regionDefault));
 
         result.setDistanceInKmToBA(distance);
     }
