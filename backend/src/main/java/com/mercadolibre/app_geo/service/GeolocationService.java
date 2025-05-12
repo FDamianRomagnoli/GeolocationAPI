@@ -1,8 +1,6 @@
 package com.mercadolibre.app_geo.service;
 
 import com.mercadolibre.app_geo.dto.*;
-import com.mercadolibre.app_geo.exception.BusinessException;
-import com.mercadolibre.app_geo.exception.messages.ErrorMessage;
 import com.mercadolibre.app_geo.mapper.CountryMapper;
 import com.mercadolibre.app_geo.mapper.CurrencyMapper;
 import com.mercadolibre.app_geo.mapper.RegionMapper;
