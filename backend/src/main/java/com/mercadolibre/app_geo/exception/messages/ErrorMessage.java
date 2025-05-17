@@ -8,7 +8,8 @@ public enum ErrorMessage {
     REGION_NOT_FOUND("REGION_NOT_FOUND", "No se encontró la region con el nombre: {0}"),
     INVALID_REQUEST("INVALID_REQUEST", "La solicitud es inválida: {0}"),
     INVALID_IP("INVALID_IP", "La IP {0} no es publica o no tiene un formato valido"),
-    EXCHANGE_RATE_ERROR_API("EXCHANGE_RATE_ERROR_API", "Error al obtener tasas de cambio de fuentes externas")
+    EXCHANGE_RATE_ERROR_API("EXCHANGE_RATE_ERROR_API", "Error al obtener tasas de cambio de fuentes externas"),
+    IP_ERROR_API("IP_ERROR_API", "Error al obtener informacion de ubicacion de Api externa")
     ;
 
 
